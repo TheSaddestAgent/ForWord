@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -59,25 +61,54 @@ public class MainActivity extends AppCompatActivity {
         else
             tv_win_streak.setText("Ваша серия побед составила" + (this.win_streak) + " дней! Так держать!");
 
-        gridLayout = findViewById(R.id.grid_layout);
-        LayoutInflater inflater = LayoutInflater.from(this);
+        LinearLayout row1 = findViewById(R.id.row1);
+        LinearLayout row2 = findViewById(R.id.row2);
 
-        for (int i = 0; i < daysOfWeek.length; i++) {
-            // Создаем новый элемент (кружок) из шаблона
-            RelativeLayout dayItem = (RelativeLayout) inflater.inflate(R.layout.item_day, gridLayout, false);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        for (int i = 0; i < 4; i++) {
+            RelativeLayout dayItem = (RelativeLayout) inflater.inflate(R.layout.item_day, row1, false);
             ImageView dayCircle = dayItem.findViewById(R.id.day_circle);
             TextView dayName = dayItem.findViewById(R.id.day_name);
 
-            dayName.setText(daysOfWeek[i]);
+            dayName.setText(daysOfWeek[i].substring(0, 3));
 
             // Проверяем, нужно ли сделать кружок зеленым
             if (isDayActive(daysOfWeek[i])) {
                 dayCircle.setImageResource(R.drawable.completed_circle_day);
             }
 
-            gridLayout.addView(dayItem);
+            // Настраиваем параметры для равномерного распределения
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    0, // Ширина равна 0, чтобы учитывать вес
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1f // Вес равен 1
+            );
+            dayItem.setLayoutParams(params);
+
+            row1.addView(dayItem);
+        }
+        for (int i = 0; i < 3; i++) {
+            RelativeLayout dayItem = (RelativeLayout) inflater.inflate(R.layout.item_day, row2, false);
+            ImageView dayCircle = dayItem.findViewById(R.id.day_circle);
+            TextView dayName = dayItem.findViewById(R.id.day_name);
+
+            dayName.setText(daysOfWeek[i + 4].substring(0, 3));
+
+            // Проверяем, нужно ли сделать кружок зеленым
+            if (isDayActive(daysOfWeek[i + 4])) {
+                dayCircle.setImageResource(R.drawable.completed_circle_day);
+            }
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    0,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1f
+            );
+            dayItem.setLayoutParams(params);
+
+            row2.addView(dayItem);
         }
     }
+
     public String[] getWeeklyActivity(){
         // Смотрим дни за неделю, когда пользователь учил слова. Формат - массив строк по типу {"Monday", "Friday"}
         Set<String> set = user_activity.getStringSet("weekly_activity", new HashSet<String>());
