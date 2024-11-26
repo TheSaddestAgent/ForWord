@@ -33,6 +33,8 @@ public class LearningActivity extends AppCompatActivity {
     // Список слов и переводов
     private ArrayList<String[]> wordsList;
     private int currentWordIndex = 0;
+    private boolean isSwiping = false;
+    private boolean isFrontSide = true;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -56,24 +58,32 @@ public class LearningActivity extends AppCompatActivity {
 
         setWord();
 
-        // Инициализация GestureDetector для обработки свайпов
         gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapUp(@NonNull MotionEvent e) {
                 // Переворачиваем карточку по клику
-                flipCard();
+                if (!isSwiping)
+                    flipCard();
                 return super.onSingleTapUp(e);
             }
 
-            // Добавьте обработку свайпов по необходимости
             @Override
             public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
+                isSwiping = true;
                 if (velocityX > 0) {
                     swipeCardRight();
                 } else {
                     swipeCardLeft();
                 }
                 return super.onFling(e1, e2, velocityX, velocityY);
+            }
+
+            @Override
+            public void onLongPress(@NonNull MotionEvent e) {
+                super.onLongPress(e);
+                flipCard();
+
+                isSwiping = true; // Свайп также должен срабатывать на долгий пресс
             }
         });
 
@@ -108,20 +118,34 @@ public class LearningActivity extends AppCompatActivity {
             translationText.setVisibility(View.GONE);
             wordText.setVisibility(View.VISIBLE);
         }
-
+        int timing = 500;
         ObjectAnimator flipAnimator = ObjectAnimator.ofFloat(cardView, "rotationY", 0f, 180f);
-        flipAnimator.setDuration(500);
+        flipAnimator.setDuration(timing);
+        ObjectAnimator textAnimator;
+        if (isFrontSide) {
+            textAnimator = ObjectAnimator.ofFloat(translationText, "scaleX", 1f, -1f);
+            textAnimator.setDuration(timing);
+            isFrontSide = false;
+        } else {
+            textAnimator = ObjectAnimator.ofFloat(wordText, "scaleX", 1f, -1f);
+            textAnimator.setDuration(timing);
+            isFrontSide = true;
+        }
+        textAnimator.start();
         flipAnimator.start();
+
     }
 
     private void swipeCardRight() {
         Toast.makeText(LearningActivity.this, "Свайп влево", Toast.LENGTH_SHORT).show();
         nextWord();
+        isSwiping = false;
     }
 
     private void swipeCardLeft() {
         Toast.makeText(LearningActivity.this, "Свайп вправо", Toast.LENGTH_SHORT).show();
         nextWord();
+        isSwiping = false;
     }
 
     private void nextWord() {
