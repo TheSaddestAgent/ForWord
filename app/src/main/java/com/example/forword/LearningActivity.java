@@ -88,9 +88,49 @@ public class LearningActivity extends AppCompatActivity {
         });
 
         cardView.setOnTouchListener(new View.OnTouchListener() {
+            private float downX;  // Начальная позиция по X
+            private float downY;  // Начальная позиция по Y
+            private boolean isMoving = false;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: // Начало касания
+                        downX = event.getRawX();
+                        downY = event.getRawY();
+                        isMoving = false;
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE: // Перемещение
+                        float deltaX = event.getRawX() - downX;
+                        float deltaY = event.getRawY() - downY;
+
+                        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                            // Свайп только по горизонтали
+                            isMoving = true;
+                            cardView.setTranslationX(deltaX);
+                            cardView.setRotation(deltaX / 20);
+                        }
+                        return true;
+
+                    case MotionEvent.ACTION_UP: // Конец касания
+                        if (isMoving) {
+                            float translationX = cardView.getTranslationX();
+
+                            if (Math.abs(translationX) > (int)(cardView.getWidth() / 2)) {
+                                // Если свайп больше половины ширины, удаляем карточку
+                                if (translationX > 0) {
+                                    swipeCardRight();
+                                } else {
+                                    swipeCardLeft();
+                                }
+                            } else {
+                                resetCardPosition();
+                            }
+                        }
+                        return true;
+                }
+                return false;
             }
         });
 
@@ -102,7 +142,14 @@ public class LearningActivity extends AppCompatActivity {
             nextWord();
         });
     }
-
+    private void resetCardPosition() {
+        // Анимация возврата карточки на исходную позицию
+        cardView.animate()
+                .translationX(0)
+                .rotation(0)
+                .setDuration(300)
+                .start();
+    }
     private void setWord() {
         // Получаем текущее слово и его перевод
         String[] currentWord = wordsList.get(currentWordIndex);
@@ -137,13 +184,13 @@ public class LearningActivity extends AppCompatActivity {
     }
 
     private void swipeCardRight() {
-        Toast.makeText(LearningActivity.this, "Свайп влево", Toast.LENGTH_SHORT).show();
+        Toast.makeText(LearningActivity.this, "Свайп вправо", Toast.LENGTH_SHORT).show();
         nextWord();
         isSwiping = false;
     }
 
     private void swipeCardLeft() {
-        Toast.makeText(LearningActivity.this, "Свайп вправо", Toast.LENGTH_SHORT).show();
+        Toast.makeText(LearningActivity.this, "Свайп влево", Toast.LENGTH_SHORT).show();
         nextWord();
         isSwiping = false;
     }
