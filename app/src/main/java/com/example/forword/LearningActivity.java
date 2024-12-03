@@ -231,6 +231,7 @@ public class LearningActivity extends AppCompatActivity {
         currentWordIndex++;
         if (currentWordIndex >= wordsList.size()) {
             currentWordIndex = 0;
+            Toast.makeText(this, "Вы исследовали весь список слов!", Toast.LENGTH_SHORT).show();
         }
         setWord(); // Обновляем отображаемое слово
     }
