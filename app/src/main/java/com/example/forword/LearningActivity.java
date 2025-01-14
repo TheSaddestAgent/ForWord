@@ -21,11 +21,15 @@ import androidx.cardview.widget.CardView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class LearningActivity extends AppCompatActivity {
@@ -40,7 +44,9 @@ public class LearningActivity extends AppCompatActivity {
     private boolean isSwiping = false;
     private boolean isFrontSide = true;
     SharedPreferences user_activity;
-    public TreeMap<String, String> wordsMap = new TreeMap<>();
+    public TreeMap wordsMap = new TreeMap<>();
+    public TreeMap learningMap = new TreeMap<>();
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -61,8 +67,15 @@ public class LearningActivity extends AppCompatActivity {
 
         if (json != null) {
             Gson gson = new Gson();
-            wordsMap = gson.fromJson(json, new TypeToken<TreeMap<String, String>>() {
-            }.getType());
+            Type mapType = new TypeToken<Map<String, String>>() {}.getType();
+
+            // Преобразуем JSON в Map
+            Map<String, String> map = gson.fromJson(json, mapType);
+
+            // Создаем TreeMap и добавляем все элементы
+            wordsMap = new TreeMap<>(map);
+            //wordsMap = gson.fromJson(json, new TypeToken<TreeMap<String, String>>() {
+            //}.getType())
         } else {
             loadWords();
             if (wordsMap == null) {
@@ -74,7 +87,7 @@ public class LearningActivity extends AppCompatActivity {
                 wordsList.add(new String[]{"apple", "яблоко"});
             } else {
                 wordsMap.forEach((key, value) -> {
-                    wordsList.add(new String[]{key, value});
+                    wordsList.add(new String[]{(String) key, (String) value});
                 });
                 SharedPreferences.Editor editor = user_activity.edit();
 
@@ -197,7 +210,7 @@ public class LearningActivity extends AppCompatActivity {
                 throw new IOException("Файл words.json не найден");
             }
 
-            // Преобразовать содержимое файла в строку с использованием ByteArrayOutputStream
+            // Преобразовать содержимое файла в строку ByteArrayOutputStream
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             int n;
             byte[] buffer = new byte[1024];
@@ -228,9 +241,17 @@ public class LearningActivity extends AppCompatActivity {
 
     private void setWord() {
         // Получаем текущее слово и его перевод
-        String[] currentWord = wordsList.get(currentWordIndex);
-        wordText.setText(currentWord[0]);
-        translationText.setText(currentWord[1]);
+        if(this.wordsMap.isEmpty()) {
+            String[] currentWord = wordsList.get(currentWordIndex);
+            wordText.setText(currentWord[0]);
+            translationText.setText(currentWord[1]);
+        }else{
+            // Преобразуем entrySet в список
+            List<Map.Entry<String, String>> entryList = new ArrayList<>(wordsMap.entrySet());
+            Map.Entry<String, String> entry = entryList.get(currentWordIndex);
+            wordText.setText(entry.getKey());
+            translationText.setText(entry.getValue());
+        }
     }
 
     private void flipCardWithNoTiming() {
@@ -276,8 +297,6 @@ public class LearningActivity extends AppCompatActivity {
         // Запуск анимаций
         //textAnimator.start();
         flipAnimator.start();
-
-
     }
 
     private void flipCard() {
@@ -328,17 +347,43 @@ public class LearningActivity extends AppCompatActivity {
         Toast.makeText(LearningActivity.this, "Свайп вправо", Toast.LENGTH_SHORT).show();
         swipeCardOffScreen();
         isSwiping = false;
+        // Просто удаляем слово, так как уже знаем
+        if(!wordsMap.isEmpty()){
+            wordsMap.remove(wordText.getText().toString());
+            Gson gson = new Gson();
+            String json = gson.toJson(wordsMap);
+
+            SharedPreferences.Editor editor = user_activity.edit();
+            editor.putString("wordsMap", json);
+            editor.apply();
+
+            if(!Objects.requireNonNull(user_activity.getString("learningMap", null)).isEmpty()){
+                learningMap.put(wordText.getText().toString(), translationText.getText().toString());
+            }
+            gson = new Gson();
+            json = gson.toJson(learningMap);
+            editor.putString("learningMap", json);
+            editor.apply();
+        }
     }
 
     private void swipeCardLeft() {
         Toast.makeText(LearningActivity.this, "Свайп влево", Toast.LENGTH_SHORT).show();
         swipeCardOffScreen();
         isSwiping = false;
+
+        if(!wordsMap.isEmpty()){
+            wordsMap.remove(wordText.getText().toString());
+        }
     }
 
     private void nextWord() {
         currentWordIndex++;
-        if (currentWordIndex >= wordsList.size()) {
+        if (this.wordsMap.isEmpty() && currentWordIndex >= wordsList.size()) {
+            currentWordIndex = 0;
+            Toast.makeText(this, "Вы исследовали весь список слов!", Toast.LENGTH_SHORT).show();
+        }
+        if (!this.wordsMap.isEmpty() && currentWordIndex >= wordsMap.size()) {
             currentWordIndex = 0;
             Toast.makeText(this, "Вы исследовали весь список слов!", Toast.LENGTH_SHORT).show();
         }
