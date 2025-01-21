@@ -25,7 +25,7 @@ import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btn_startLearning, btn_exit;
+    Button btn_startLearning, btn_startReviewing, btn_exit;
     SharedPreferences user_activity;
     TextView tv_win_streak;
     int win_streak;
@@ -46,7 +46,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
         btn_exit.setOnClickListener(v -> finishAffinity());
-
+        btn_startReviewing = findViewById(R.id.btn_startReviewing);
+        btn_startReviewing.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ReviewingActivity.class);
+            startActivity(intent);
+        });
         int cntDays = user_activity.getInt("cnt_days", 0);
         // Обнуляем, чтобы не было переполнения памяти и сбросить счетчки с новой недели
         if(cntDays > 100000 || Objects.equals(getCurrentDayOfWeek(), "Monday")){

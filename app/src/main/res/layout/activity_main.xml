@@ -24,7 +24,7 @@
 
     <com.google.android.material.button.MaterialButton
         style="@style/BlueButtonStyle"
-        android:id="@+id/btn_startRepetition"
+        android:id="@+id/btn_startReviewing"
         android:layout_width="300dp"
         android:layout_height="100dp"
         android:text="Повторять слова"
