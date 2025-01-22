@@ -67,7 +67,8 @@ public class LearningActivity extends AppCompatActivity {
 
         if (json != null) {
             Gson gson = new Gson();
-            Type mapType = new TypeToken<Map<String, String>>() {}.getType();
+            Type mapType = new TypeToken<Map<String, String>>() {
+            }.getType();
 
             // Преобразуем JSON в Map
             Map<String, String> map = gson.fromJson(json, mapType);
@@ -241,11 +242,11 @@ public class LearningActivity extends AppCompatActivity {
 
     private void setWord() {
         // Получаем текущее слово и его перевод
-        if(this.wordsMap.isEmpty()) {
+        if (this.wordsMap.isEmpty()) {
             String[] currentWord = wordsList.get(currentWordIndex);
             wordText.setText(currentWord[0]);
             translationText.setText(currentWord[1]);
-        }else{
+        } else {
             // Преобразуем entrySet в список
             List<Map.Entry<String, String>> entryList = new ArrayList<>(wordsMap.entrySet());
             Map.Entry<String, String> entry = entryList.get(currentWordIndex);
@@ -348,7 +349,7 @@ public class LearningActivity extends AppCompatActivity {
         swipeCardOffScreen();
         isSwiping = false;
         // Просто удаляем слово, так как уже знаем
-        if(!wordsMap.isEmpty()){
+        if (!wordsMap.isEmpty()) {
             wordsMap.remove(wordText.getText().toString());
             Gson gson = new Gson();
             String json = gson.toJson(wordsMap);
@@ -357,11 +358,22 @@ public class LearningActivity extends AppCompatActivity {
             editor.putString("wordsMap", json);
             editor.apply();
 
-            if(!Objects.requireNonNull(user_activity.getString("learningMap", null)).isEmpty()){
-                learningMap.put(wordText.getText().toString(), translationText.getText().toString());
-            }
+            json = user_activity.getString("learningMap", null);
             gson = new Gson();
-            json = gson.toJson(learningMap);
+
+            Type learningMapType = new TypeToken<TreeMap<String, String>>() {
+            }.getType();
+            learningMap = gson.fromJson(json, learningMapType);
+
+            if (learningMap == null) {
+                TreeMap<String, String> tmp = new TreeMap<>();
+                tmp.put(wordText.getText().toString(), translationText.getText().toString());
+                json = gson.toJson(tmp);
+            } else {
+                learningMap.put(wordText.getText().toString(), translationText.getText().toString());
+
+                json = gson.toJson(learningMap);
+            }
             editor.putString("learningMap", json);
             editor.apply();
         }
@@ -372,7 +384,7 @@ public class LearningActivity extends AppCompatActivity {
         swipeCardOffScreen();
         isSwiping = false;
 
-        if(!wordsMap.isEmpty()){
+        if (!wordsMap.isEmpty()) {
             wordsMap.remove(wordText.getText().toString());
         }
     }
