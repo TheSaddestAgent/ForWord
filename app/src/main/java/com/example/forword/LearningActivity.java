@@ -330,7 +330,7 @@ public class LearningActivity extends AppCompatActivity {
             wordText.setVisibility(View.VISIBLE);
         }
 
-        int timing = 500;
+        int timing = 100;
 
         // Анимация переворота карточки
         ObjectAnimator flipAnimator = ObjectAnimator.ofFloat(cardView, "rotationY", 0f, 180f);
