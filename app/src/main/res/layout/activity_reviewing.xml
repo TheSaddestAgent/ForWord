@@ -6,94 +6,111 @@
     android:layout_height="match_parent"
     tools:context=".ReviewingActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        tools:ignore="MissingConstraints">
+ <Button
+     android:id="@+id/knowButton"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:layout_alignParentBottom="true"
+     android:layout_centerHorizontal="true"
+     android:text="Не вспомнил слово"
+     app:layout_constraintBottom_toBottomOf="parent"
+     app:layout_constraintEnd_toEndOf="parent"
+     app:layout_constraintHorizontal_bias="0.921"
+     app:layout_constraintStart_toStartOf="parent"
+     app:layout_constraintTop_toTopOf="parent"
+     app:layout_constraintVertical_bias="0.963" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+ <Button
+     android:id="@+id/nextWordButton"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:text="Вспомнил слово"
+     app:layout_constraintBottom_toBottomOf="parent"
+     app:layout_constraintEnd_toEndOf="parent"
+     app:layout_constraintHorizontal_bias="0.063"
+     app:layout_constraintStart_toStartOf="parent"
+     app:layout_constraintTop_toTopOf="parent"
+     app:layout_constraintVertical_bias="0.963" />
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabMode="fixed"
-            app:tabGravity="fill" />
-    </com.google.android.material.appbar.AppBarLayout>
+ <TextView
+     android:id="@+id/tv_translation"
+     android:layout_width="254dp"
+     android:layout_height="98dp"
+     android:text="Перевод на русский"
+     app:layout_constraintBottom_toBottomOf="parent"
+     app:layout_constraintEnd_toEndOf="parent"
+     app:layout_constraintHorizontal_bias="0.289"
+     app:layout_constraintStart_toStartOf="parent"
+     app:layout_constraintTop_toTopOf="parent"
+     app:layout_constraintVertical_bias="0.231" />
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    <Button
-        android:id="@+id/knowButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Не вспомнил слово"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.921"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.963" />
+ <EditText
+     android:id="@+id/et_word"
+     android:layout_width="252dp"
+     android:layout_height="88dp"
+     android:layout_marginTop="52dp"
+     android:ems="10"
+     android:hint="type the word in English here"
+     android:inputType="text"
+     app:layout_constraintBottom_toBottomOf="parent"
+     app:layout_constraintEnd_toEndOf="@+id/tv_translation"
+     app:layout_constraintHorizontal_bias="0.0"
+     app:layout_constraintStart_toStartOf="@id/tv_translation"
+     app:layout_constraintTop_toTopOf="parent"
+     app:layout_constraintVertical_bias="0.362" />
 
-    <Button
-        android:id="@+id/nextWordButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Вспомнил слово"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.063"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.963" />
+ <ImageView
+     android:id="@+id/iv_eye"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     app:layout_constraintBottom_toBottomOf="parent"
+     app:layout_constraintEnd_toEndOf="parent"
+     app:layout_constraintHorizontal_bias="0.498"
+     app:layout_constraintStart_toStartOf="parent"
+     app:layout_constraintTop_toBottomOf="@+id/et_word"
+     app:layout_constraintVertical_bias="0.198"
+     app:srcCompat="@drawable/eye" />
 
-    <TextView
-        android:id="@+id/tv_translation"
-        android:layout_width="254dp"
-        android:layout_height="98dp"
-        android:text="Перевод на русский"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.289"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.231" />
+ <Button
+     android:id="@+id/btn_toLearningActivity"
+     android:layout_width="150dp"
+     android:layout_height="60dp"
+     android:text="Изучение"
+     app:layout_constraintBottom_toBottomOf="parent"
+     app:layout_constraintEnd_toEndOf="parent"
+     app:layout_constraintHorizontal_bias="0.323"
+     app:layout_constraintStart_toStartOf="parent"
+     app:layout_constraintTop_toTopOf="parent"
 
-    <EditText
-        android:id="@+id/et_word"
-        android:layout_width="252dp"
-        android:layout_height="88dp"
-        android:layout_marginTop="52dp"
-        android:ems="10"
-        android:hint="type the word in English here"
-        android:inputType="text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/tv_translation"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@id/tv_translation"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.362" />
+     app:layout_constraintVertical_bias="0.01" />
 
-    <ImageView
-        android:id="@+id/iv_eye"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_word"
-        app:layout_constraintVertical_bias="0.198"
-        app:srcCompat="@drawable/eye" />
+ <Button
+     android:id="@+id/btn_toReviewingActivity"
+     android:layout_width="150dp"
+     android:layout_height="60dp"
+     android:text="Повторение"
+     app:layout_constraintBottom_toBottomOf="parent"
+     app:layout_constraintEnd_toEndOf="parent"
+     app:layout_constraintHorizontal_bias="0.932"
+     app:layout_constraintStart_toStartOf="parent"
+     app:layout_constraintTop_toTopOf="parent"
+     app:layout_constraintVertical_bias="0.008" />
+
+ <ImageButton
+     android:id="@+id/iv_back"
+     android:layout_width="60dp"
+     android:layout_height="60dp"
+     android:layout_marginStart="18dp"
+     android:layout_marginTop="7dp"
+     android:layout_marginEnd="331dp"
+     android:layout_marginBottom="641dp"
+     app:layout_constraintBottom_toBottomOf="parent"
+     app:layout_constraintEnd_toEndOf="parent"
+     app:layout_constraintHorizontal_bias="0.071"
+     app:layout_constraintStart_toStartOf="parent"
+     app:layout_constraintTop_toTopOf="parent"
+     app:layout_constraintVertical_bias="0.0"
+
+     app:srcCompat="@drawable/arrow_left" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

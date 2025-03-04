@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,12 +22,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class ReviewingActivity extends AppCompatActivity {
-    private TabLayout tabLayout;
     EditText et_word;
     TextView tv_translation;
     ImageView iv_eye;
     SharedPreferences user_activity;
     TreeMap<String, String> learningMap;
+    ImageView iv_back;
+    Button btn_toLearningActivity, btn_toReviewingActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,36 +40,9 @@ public class ReviewingActivity extends AppCompatActivity {
         et_word = findViewById(R.id.et_word);
         iv_eye = findViewById(R.id.iv_eye);
         tv_translation = findViewById(R.id.tv_translation);
-        tabLayout = findViewById(R.id.tab_layout);
-
-
-        // Вкладки
-        tabLayout.addTab(tabLayout.newTab().setText("Первая активность"));
-        tabLayout.addTab(tabLayout.newTab().setText("Вторая активность"));
-
-        // Listener для вкладок
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {// Переход к первой активности
-                    startActivity(new Intent(ReviewingActivity.this, LearningActivity.class));
-                }
-                else{
-                    startActivity(new Intent(ReviewingActivity.this, ReviewingActivity.class));
-
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                // Не требуется
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                // Не требуется
-            }
-        });
+        iv_back = findViewById(R.id.iv_back);
+        btn_toLearningActivity = findViewById(R.id.btn_toLearningActivity);
+        btn_toReviewingActivity = findViewById(R.id.btn_toReviewingActivity);
 
         String json = user_activity.getString("learningMap", null);
         Gson gson = new Gson();
@@ -81,6 +57,16 @@ public class ReviewingActivity extends AppCompatActivity {
             tv_translation.setText(learningMap.get(learningMap.firstKey()));
         }
 
-
+        iv_back.setOnClickListener(view -> {
+            Intent intent = new Intent(ReviewingActivity.this, MainActivity.class);
+            startActivity(intent);
+        });
+        btn_toLearningActivity.setOnClickListener(view -> {
+            Intent intent = new Intent(ReviewingActivity.this, LearningActivity.class);
+            startActivity(intent);
+        });
+        btn_toReviewingActivity.setOnClickListener(view -> {
+            Toast.makeText(this,"Вы уже находитесь в данной вкладке", Toast.LENGTH_SHORT).show();
+        });
     }
 }
