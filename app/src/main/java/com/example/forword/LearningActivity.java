@@ -79,10 +79,8 @@ public class LearningActivity extends AppCompatActivity {
             Type mapType = new TypeToken<Map<String, String>>() {
             }.getType();
 
-            // Преобразуем JSON в Map
             Map<String, String> map = gson.fromJson(json, mapType);
 
-            // Создаем TreeMap и добавляем все элементы
             wordsMap = new TreeMap<>(map);
             //wordsMap = gson.fromJson(json, new TypeToken<TreeMap<String, String>>() {
             //}.getType())
@@ -101,11 +99,9 @@ public class LearningActivity extends AppCompatActivity {
                 });
                 SharedPreferences.Editor editor = user_activity.edit();
 
-                // Сериализация TreeMap в JSON строку с помощью Gson
                 Gson gson = new Gson();
                 json = gson.toJson(wordsMap);
 
-                // Сохранение строки в SharedPreferences
                 editor.putString("wordsMap", json);
                 editor.apply();
             }
@@ -150,7 +146,7 @@ public class LearningActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: // Начало касания
+                    case MotionEvent.ACTION_DOWN:
                         downX = event.getRawX();
                         downY = event.getRawY();
                         downTime = System.currentTimeMillis();
@@ -164,8 +160,8 @@ public class LearningActivity extends AppCompatActivity {
                         if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 20) {
                             // Считаем движение как свайп, если смещение достаточно велико
                             isMoving = true;
-                            cardView.setTranslationX(deltaX); // Перемещаем карточку
-                            cardView.setRotation(deltaX / 20); // Поворачиваем карточку
+                            cardView.setTranslationX(deltaX);
+                            cardView.setRotation(deltaX / 20);
                         }
                         return true;
 

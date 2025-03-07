@@ -30,7 +30,8 @@ public class ReviewingActivity extends AppCompatActivity {
     TreeMap<String, String> learningMap;
     ImageButton ib_back;
     Button btn_toLearningActivity, btn_toReviewingActivity;
-
+    ImageButton btn_check;
+    String cur;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +45,7 @@ public class ReviewingActivity extends AppCompatActivity {
         ib_back = findViewById(R.id.ib_back);
         btn_toLearningActivity = findViewById(R.id.btn_toLearningActivity);
         btn_toReviewingActivity = findViewById(R.id.btn_toReviewingActivity);
-
+        btn_check = findViewById(R.id.btn_check);
         String json = user_activity.getString("learningMap", null);
         Gson gson = new Gson();
 
@@ -55,7 +56,9 @@ public class ReviewingActivity extends AppCompatActivity {
         if (learningMap == null) {
             Toast.makeText(this, "В данный момент у вас нет текущих слов", Toast.LENGTH_SHORT).show();
         } else {
-            tv_translation.setText(learningMap.get(learningMap.firstKey()));
+            String s = learningMap.firstKey();
+            tv_translation.setText(learningMap.get(s));
+            this.cur = s;
         }
 
         ib_back.setOnClickListener(view -> {
@@ -69,5 +72,32 @@ public class ReviewingActivity extends AppCompatActivity {
         btn_toReviewingActivity.setOnClickListener(view -> {
             Toast.makeText(this,"Вы уже находитесь в данной вкладке", Toast.LENGTH_SHORT).show();
         });
+        btn_check.setOnClickListener(view ->{
+            String userGuess = et_word.getText().toString();
+            if(learningMap.isEmpty() || !((tv_translation.getText().toString()).equals(learningMap.get(userGuess)))){
+                Toast.makeText(this,"Неправильно, попробуйте еще", Toast.LENGTH_SHORT).show();
+            } else{
+                //Toast.makeText(this,"Верно!", Toast.LENGTH_SHORT).show();
+                this.tv_translation.setText("!!!");
+                nextWord();
+            }
+        });
+    }
+
+    private void nextWord(){
+        if(this.cur == null || this.cur.isEmpty()){
+            Toast.makeText(this, "ERROR: this.cur пустой", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        learningMap.remove(this.cur);
+        Toast.makeText(this, this.cur, Toast.LENGTH_SHORT).show();
+        if(learningMap.isEmpty()){
+            Toast.makeText(this, "Закончились слова для повторения!", Toast.LENGTH_SHORT).show();
+            return;
+
+        }
+        Map.Entry<String,String> nxt = learningMap.firstEntry();
+        this.tv_translation.setText(nxt.getValue().toString());
+        this.et_word.setText("");
     }
 }
