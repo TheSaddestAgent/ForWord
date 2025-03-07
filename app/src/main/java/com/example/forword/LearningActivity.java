@@ -12,6 +12,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +51,7 @@ public class LearningActivity extends AppCompatActivity {
     public TreeMap learningMap = new TreeMap<>();
 
     Button btn_toLearningActivity, btn_toReviewingActivity;
-    ImageView iv_back;
+    ImageButton ib_back;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -67,7 +68,7 @@ public class LearningActivity extends AppCompatActivity {
 
         wordsList = new ArrayList<>();
 
-        iv_back = findViewById(R.id.iv_back);
+        ib_back = findViewById(R.id.ib_back);
         btn_toLearningActivity = findViewById(R.id.btn_toLearningActivity);
         btn_toReviewingActivity = findViewById(R.id.btn_toReviewingActivity);
 
@@ -202,7 +203,7 @@ public class LearningActivity extends AppCompatActivity {
         nextWordButton.setOnClickListener(v -> {
             nextWord();
         });
-        iv_back.setOnClickListener(view -> {
+        ib_back.setOnClickListener(view -> {
             Intent intent = new Intent(LearningActivity.this, MainActivity.class);
             startActivity(intent);
         });

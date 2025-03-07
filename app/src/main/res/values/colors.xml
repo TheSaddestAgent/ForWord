@@ -5,4 +5,7 @@
     <color name="blue">#FF007FAC</color>
     <color name="default_circle">#919191</color>
     <color name="completed_circle">#AFED66</color>
+    <color name="light_grey">#EEEEEE</color>
+    <color name="grey">#BABABA</color>
+    <color name="dark_grey">#878787</color>
 </resources>

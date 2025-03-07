@@ -6,6 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".ReviewingActivity">
 
+ <ImageButton
+     android:id="@+id/ib_back"
+     android:layout_width="60dp"
+     android:layout_height="60dp"
+     android:layout_marginStart="18dp"
+     android:layout_marginTop="7dp"
+     android:layout_marginEnd="331dp"
+     android:layout_marginBottom="641dp"
+     android:background="#FFFFFF"
+     app:layout_constraintBottom_toBottomOf="parent"
+     app:layout_constraintEnd_toEndOf="parent"
+     app:layout_constraintStart_toStartOf="parent"
+
+     app:layout_constraintTop_toTopOf="parent"
+     app:layout_constraintVertical_bias="1.0"
+     app:srcCompat="@drawable/arrow_left" />
+
  <Button
      android:id="@+id/knowButton"
      android:layout_width="wrap_content"
@@ -34,15 +51,19 @@
 
  <TextView
      android:id="@+id/tv_translation"
-     android:layout_width="254dp"
+     android:layout_width="252dp"
      android:layout_height="98dp"
+     android:background="@color/grey"
+     android:gravity="center"
      android:text="Перевод на русский"
+     android:textAppearance="@style/TextAppearance.AppCompat.Large"
+     android:textStyle="bold"
      app:layout_constraintBottom_toBottomOf="parent"
      app:layout_constraintEnd_toEndOf="parent"
-     app:layout_constraintHorizontal_bias="0.289"
+     app:layout_constraintHorizontal_bias="0.496"
      app:layout_constraintStart_toStartOf="parent"
      app:layout_constraintTop_toTopOf="parent"
-     app:layout_constraintVertical_bias="0.231" />
+     app:layout_constraintVertical_bias="0.227" />
 
  <EditText
      android:id="@+id/et_word"
@@ -50,7 +71,8 @@
      android:layout_height="88dp"
      android:layout_marginTop="52dp"
      android:ems="10"
-     android:hint="type the word in English here"
+     android:gravity="center"
+     android:hint="Type the word in English here"
      android:inputType="text"
      app:layout_constraintBottom_toBottomOf="parent"
      app:layout_constraintEnd_toEndOf="@+id/tv_translation"
@@ -59,30 +81,35 @@
      app:layout_constraintTop_toTopOf="parent"
      app:layout_constraintVertical_bias="0.362" />
 
- <ImageView
-     android:id="@+id/iv_eye"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
+ <ImageButton
+     android:id="@+id/ib_eye"
+     style="@style/Widget.AppCompat.ImageButton"
+     android:layout_width="124dp"
+     android:layout_height="115dp"
+     android:background="@android:color/transparent"
+     android:backgroundTint="#FFFFFF"
      app:layout_constraintBottom_toBottomOf="parent"
      app:layout_constraintEnd_toEndOf="parent"
-     app:layout_constraintHorizontal_bias="0.498"
+     app:layout_constraintHorizontal_bias="0.721"
      app:layout_constraintStart_toStartOf="parent"
      app:layout_constraintTop_toBottomOf="@+id/et_word"
-     app:layout_constraintVertical_bias="0.198"
+     app:layout_constraintVertical_bias="0.041"
      app:srcCompat="@drawable/eye" />
 
  <Button
      android:id="@+id/btn_toLearningActivity"
      android:layout_width="150dp"
      android:layout_height="60dp"
+     android:background="@color/grey"
      android:text="Изучение"
+
      app:layout_constraintBottom_toBottomOf="parent"
      app:layout_constraintEnd_toEndOf="parent"
-     app:layout_constraintHorizontal_bias="0.323"
+     app:layout_constraintHorizontal_bias="0.356"
      app:layout_constraintStart_toStartOf="parent"
-     app:layout_constraintTop_toTopOf="parent"
 
-     app:layout_constraintVertical_bias="0.01" />
+     app:layout_constraintTop_toTopOf="parent"
+     app:layout_constraintVertical_bias="0.044" />
 
  <Button
      android:id="@+id/btn_toReviewingActivity"
@@ -91,26 +118,25 @@
      android:text="Повторение"
      app:layout_constraintBottom_toBottomOf="parent"
      app:layout_constraintEnd_toEndOf="parent"
-     app:layout_constraintHorizontal_bias="0.932"
+     app:layout_constraintHorizontal_bias="0.931"
      app:layout_constraintStart_toStartOf="parent"
      app:layout_constraintTop_toTopOf="parent"
-     app:layout_constraintVertical_bias="0.008" />
+     app:layout_constraintVertical_bias="0.044" />
 
  <ImageButton
-     android:id="@+id/iv_back"
-     android:layout_width="60dp"
-     android:layout_height="60dp"
-     android:layout_marginStart="18dp"
-     android:layout_marginTop="7dp"
-     android:layout_marginEnd="331dp"
-     android:layout_marginBottom="641dp"
+     android:id="@+id/btn_check"
+     android:layout_width="94dp"
+     android:layout_height="89dp"
+     android:layout_marginTop="24dp"
+     android:layout_marginEnd="28dp"
+     android:background="#FFFFFF"
      app:layout_constraintBottom_toBottomOf="parent"
-     app:layout_constraintEnd_toEndOf="parent"
-     app:layout_constraintHorizontal_bias="0.071"
+     app:layout_constraintEnd_toStartOf="@+id/ib_eye"
+     app:layout_constraintHorizontal_bias="0.929"
      app:layout_constraintStart_toStartOf="parent"
-     app:layout_constraintTop_toTopOf="parent"
+     app:layout_constraintTop_toBottomOf="@+id/et_word"
      app:layout_constraintVertical_bias="0.0"
+     app:srcCompat="@drawable/check" />
 
-     app:srcCompat="@drawable/arrow_left" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
