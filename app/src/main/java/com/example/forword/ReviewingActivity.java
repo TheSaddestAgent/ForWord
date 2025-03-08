@@ -29,7 +29,7 @@ public class ReviewingActivity extends AppCompatActivity {
     SharedPreferences user_activity;
     TreeMap<String, String> learningMap;
     ImageButton ib_back;
-    Button btn_toLearningActivity, btn_toReviewingActivity;
+    Button btn_toLearningActivity, btn_toReviewingActivity, btn_removeWord, btn_saveWord;
     ImageButton btn_check;
     String cur;
     @Override
@@ -46,6 +46,8 @@ public class ReviewingActivity extends AppCompatActivity {
         btn_toLearningActivity = findViewById(R.id.btn_toLearningActivity);
         btn_toReviewingActivity = findViewById(R.id.btn_toReviewingActivity);
         btn_check = findViewById(R.id.btn_check);
+        btn_removeWord = findViewById(R.id.btn_removeWord);
+        btn_saveWord = findViewById(R.id.btn_saveWord);
         String json = user_activity.getString("learningMap", null);
         Gson gson = new Gson();
 
@@ -77,27 +79,38 @@ public class ReviewingActivity extends AppCompatActivity {
             if(learningMap.isEmpty() || !((tv_translation.getText().toString()).equals(learningMap.get(userGuess)))){
                 Toast.makeText(this,"Неправильно, попробуйте еще", Toast.LENGTH_SHORT).show();
             } else{
-                //Toast.makeText(this,"Верно!", Toast.LENGTH_SHORT).show();
-                this.tv_translation.setText("!!!");
+                this.tv_translation.setText("Вы повторили все слова! Начните изучать новые!");
                 nextWord();
+
             }
         });
+        ib_eye.setOnClickListener(view -> {
+            this.et_word.setText(this.cur);
+        });
+        btn_removeWord.setOnClickListener(view -> {
+            nextWord();
+        });
+        btn_saveWord.setOnClickListener(view -> {
+            learningMap.remove(this.cur);
+            learningMap.put(this.cur, this.tv_translation.getText().toString());
+            nextWord();
+        });
     }
-
     private void nextWord(){
         if(this.cur == null || this.cur.isEmpty()){
             Toast.makeText(this, "ERROR: this.cur пустой", Toast.LENGTH_SHORT).show();
             return;
         }
         learningMap.remove(this.cur);
-        Toast.makeText(this, this.cur, Toast.LENGTH_SHORT).show();
         if(learningMap.isEmpty()){
+            this.tv_translation.setText("Вы повторили все слова! Начните изучать новые!");
             Toast.makeText(this, "Закончились слова для повторения!", Toast.LENGTH_SHORT).show();
             return;
 
         }
         Map.Entry<String,String> nxt = learningMap.firstEntry();
         this.tv_translation.setText(nxt.getValue().toString());
+        this.cur = nxt.getKey().toString();
         this.et_word.setText("");
     }
 }

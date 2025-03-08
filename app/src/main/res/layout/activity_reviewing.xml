@@ -24,12 +24,12 @@
      app:srcCompat="@drawable/arrow_left" />
 
  <Button
-     android:id="@+id/knowButton"
+     android:id="@+id/btn_saveWord"
      android:layout_width="wrap_content"
      android:layout_height="wrap_content"
      android:layout_alignParentBottom="true"
      android:layout_centerHorizontal="true"
-     android:text="Не вспомнил слово"
+     android:text="Отложить на потом"
      app:layout_constraintBottom_toBottomOf="parent"
      app:layout_constraintEnd_toEndOf="parent"
      app:layout_constraintHorizontal_bias="0.921"
@@ -38,10 +38,10 @@
      app:layout_constraintVertical_bias="0.963" />
 
  <Button
-     android:id="@+id/nextWordButton"
+     android:id="@+id/btn_removeWord"
      android:layout_width="wrap_content"
      android:layout_height="wrap_content"
-     android:text="Вспомнил слово"
+     android:text="Убрать окончательно"
      app:layout_constraintBottom_toBottomOf="parent"
      app:layout_constraintEnd_toEndOf="parent"
      app:layout_constraintHorizontal_bias="0.063"
@@ -53,7 +53,7 @@
      android:id="@+id/tv_translation"
      android:layout_width="252dp"
      android:layout_height="98dp"
-     android:background="@color/grey"
+     android:background="@color/light_grey"
      android:gravity="center"
      android:text="Перевод на русский"
      android:textAppearance="@style/TextAppearance.AppCompat.Large"
