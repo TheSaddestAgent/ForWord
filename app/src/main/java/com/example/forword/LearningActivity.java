@@ -30,10 +30,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 
 public class LearningActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
@@ -47,8 +47,8 @@ public class LearningActivity extends AppCompatActivity {
     private boolean isSwiping = false;
     private boolean isFrontSide = true;
     SharedPreferences user_activity;
-    public TreeMap wordsMap = new TreeMap<>();
-    public TreeMap learningMap = new TreeMap<>();
+    public HashMap wordsMap = new HashMap<>();
+    public HashMap learningMap = new HashMap<>();
 
     Button btn_toLearningActivity, btn_toReviewingActivity;
     ImageButton ib_back;
@@ -81,8 +81,8 @@ public class LearningActivity extends AppCompatActivity {
 
             Map<String, String> map = gson.fromJson(json, mapType);
 
-            wordsMap = new TreeMap<>(map);
-            //wordsMap = gson.fromJson(json, new TypeToken<TreeMap<String, String>>() {
+            wordsMap = new HashMap<>(map);
+            //wordsMap = gson.fromJson(json, new TypeToken<HashMap<String, String>>() {
             //}.getType())
         } else {
             loadWords();
@@ -260,7 +260,7 @@ public class LearningActivity extends AppCompatActivity {
 
     private void setWord() {
         // Получаем текущее слово и его перевод
-        if (this.wordsMap.isEmpty()) {
+        if (this.wordsMap == null || this.wordsMap.isEmpty()) {
             String[] currentWord = wordsList.get(currentWordIndex);
             wordText.setText(currentWord[0]);
             translationText.setText(currentWord[1]);
@@ -362,12 +362,11 @@ public class LearningActivity extends AppCompatActivity {
         flipAnimator.start();
     }
 
-    private void swipeCardRight() {
-        Toast.makeText(LearningActivity.this, "Свайп вправо", Toast.LENGTH_SHORT).show();
+    private void swipeCardLeft() {
+        Toast.makeText(LearningActivity.this, "Свайп влево", Toast.LENGTH_SHORT).show();
         swipeCardOffScreen();
         isSwiping = false;
-        // Просто удаляем слово, так как уже знаем
-        if (!wordsMap.isEmpty()) {
+        if (this.wordsMap != null && !wordsMap.isEmpty()) {
             wordsMap.remove(wordText.getText().toString());
             Gson gson = new Gson();
             String json = gson.toJson(wordsMap);
@@ -378,13 +377,20 @@ public class LearningActivity extends AppCompatActivity {
 
             json = user_activity.getString("learningMap", null);
             gson = new Gson();
-
-            Type learningMapType = new TypeToken<TreeMap<String, String>>() {
+            if(json == null || json.isEmpty()){
+                HashMap<String, String> tmp = new HashMap<>();
+                tmp.put(wordText.getText().toString(), translationText.getText().toString());
+                json = gson.toJson(tmp);
+                editor.putString("learningMap", json);
+                editor.apply();
+                return;
+            }
+            Type learningMapType = new TypeToken<HashMap<String, String>>() {
             }.getType();
             learningMap = gson.fromJson(json, learningMapType);
 
             if (learningMap == null) {
-                TreeMap<String, String> tmp = new TreeMap<>();
+                HashMap<String, String> tmp = new HashMap<>();
                 tmp.put(wordText.getText().toString(), translationText.getText().toString());
                 json = gson.toJson(tmp);
             } else {
@@ -397,23 +403,23 @@ public class LearningActivity extends AppCompatActivity {
         }
     }
 
-    private void swipeCardLeft() {
-        Toast.makeText(LearningActivity.this, "Свайп влево", Toast.LENGTH_SHORT).show();
+    private void swipeCardRight() {
+        Toast.makeText(LearningActivity.this, "Свайп вправо", Toast.LENGTH_SHORT).show();
         swipeCardOffScreen();
         isSwiping = false;
 
-        if (!wordsMap.isEmpty()) {
+        if (wordsMap != null && !wordsMap.isEmpty()) {
             wordsMap.remove(wordText.getText().toString());
         }
     }
 
     private void nextWord() {
         currentWordIndex++;
-        if (this.wordsMap.isEmpty() && currentWordIndex >= wordsList.size()) {
+        if ((this.wordsMap == null || this.wordsMap.isEmpty()) && currentWordIndex >= wordsList.size()) {
             currentWordIndex = 0;
             Toast.makeText(this, "Вы исследовали весь список слов!", Toast.LENGTH_SHORT).show();
         }
-        if (!this.wordsMap.isEmpty() && currentWordIndex >= wordsMap.size()) {
+        if (this.wordsMap != null && !this.wordsMap.isEmpty() && currentWordIndex >= wordsMap.size()) {
             currentWordIndex = 0;
             Toast.makeText(this, "Вы исследовали весь список слов!", Toast.LENGTH_SHORT).show();
         }

@@ -19,15 +19,16 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Objects;
 
 public class ReviewingActivity extends AppCompatActivity {
     EditText et_word;
     TextView tv_translation;
     ImageButton ib_eye;
     SharedPreferences user_activity;
-    TreeMap<String, String> learningMap;
+    HashMap<String, String> learningMap;
     ImageButton ib_back;
     Button btn_toLearningActivity, btn_toReviewingActivity, btn_removeWord, btn_saveWord;
     ImageButton btn_check;
@@ -48,21 +49,31 @@ public class ReviewingActivity extends AppCompatActivity {
         btn_check = findViewById(R.id.btn_check);
         btn_removeWord = findViewById(R.id.btn_removeWord);
         btn_saveWord = findViewById(R.id.btn_saveWord);
-        String json = user_activity.getString("learningMap", null);
-        Gson gson = new Gson();
 
-        Type learningMapType = new TypeToken<TreeMap<String, String>>() {
-        }.getType();
-        learningMap = gson.fromJson(json, learningMapType);
-
-        if (learningMap == null) {
+        if(!user_activity.contains("learningMap") || (user_activity.getString("learningMap", null) == null)
+                || (Objects.equals(user_activity.getString("learningMap", null), "{}"))){
             Toast.makeText(this, "В данный момент у вас нет текущих слов", Toast.LENGTH_SHORT).show();
-        } else {
-            String s = learningMap.firstKey();
-            tv_translation.setText(learningMap.get(s));
-            this.cur = s;
         }
+        else {
 
+
+            String json = user_activity.getString("learningMap", null);
+            Gson gson = new Gson();
+
+            Type learningMapType = new TypeToken<HashMap<String, String>>() {
+            }.getType();
+
+            learningMap = gson.fromJson(json, learningMapType);
+
+            if (learningMap == null) {
+                Toast.makeText(this, "В данный момент у вас нет текущих слов", Toast.LENGTH_SHORT).show();
+            } else {
+                Map.Entry<String, String> firstEntry = learningMap.entrySet().iterator().next();
+                String s = firstEntry.getKey();
+                tv_translation.setText(learningMap.get(s));
+                this.cur = s;
+            }
+        }
         ib_back.setOnClickListener(view -> {
             Intent intent = new Intent(ReviewingActivity.this, MainActivity.class);
             startActivity(intent);
@@ -76,7 +87,7 @@ public class ReviewingActivity extends AppCompatActivity {
         });
         btn_check.setOnClickListener(view ->{
             String userGuess = et_word.getText().toString();
-            if(learningMap.isEmpty() || !((tv_translation.getText().toString()).equals(learningMap.get(userGuess)))){
+            if(learningMap == null || learningMap.isEmpty() || !((tv_translation.getText().toString()).equals(learningMap.get(userGuess)))){
                 Toast.makeText(this,"Неправильно, попробуйте еще", Toast.LENGTH_SHORT).show();
             } else{
                 this.tv_translation.setText("Вы повторили все слова! Начните изучать новые!");
@@ -88,6 +99,7 @@ public class ReviewingActivity extends AppCompatActivity {
             this.et_word.setText(this.cur);
         });
         btn_removeWord.setOnClickListener(view -> {
+            learningMap.remove(this.cur);
             nextWord();
         });
         btn_saveWord.setOnClickListener(view -> {
@@ -101,16 +113,27 @@ public class ReviewingActivity extends AppCompatActivity {
             Toast.makeText(this, "ERROR: this.cur пустой", Toast.LENGTH_SHORT).show();
             return;
         }
-        learningMap.remove(this.cur);
+
+        updateLearningMap();
+
         if(learningMap.isEmpty()){
             this.tv_translation.setText("Вы повторили все слова! Начните изучать новые!");
             Toast.makeText(this, "Закончились слова для повторения!", Toast.LENGTH_SHORT).show();
             return;
 
         }
-        Map.Entry<String,String> nxt = learningMap.firstEntry();
-        this.tv_translation.setText(nxt.getValue().toString());
-        this.cur = nxt.getKey().toString();
+        Map.Entry<String, String> firstEntry = learningMap.entrySet().iterator().next();
+        String nxtKey = firstEntry.getKey();
+        this.tv_translation.setText(learningMap.get(nxtKey));
+        this.cur = nxtKey.toString();
         this.et_word.setText("");
     }
+    private void updateLearningMap(){
+        SharedPreferences.Editor editor = user_activity.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(learningMap);
+        editor.putString("learningMap", json);
+        editor.apply();
+    }
+
 }

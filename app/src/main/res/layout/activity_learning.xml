@@ -53,52 +53,47 @@
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Кнопка "Я уже знаю это слово" -->
 
     <Button
         android:id="@+id/knowButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="179dp"
+        android:layout_height="51dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="Я уже знаю это слово"
+        android:text="Знаю это слово"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.926"
+        app:layout_constraintHorizontal_bias="0.887"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
-        app:layout_constraintVertical_bias="0.529" />
+        app:layout_constraintVertical_bias="0.543" />
 
     <Button
         android:id="@+id/nextWordButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Следующее слово"
+        android:layout_width="176dp"
+        android:layout_height="51dp"
+        android:text="Учить слово"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.066"
+        app:layout_constraintHorizontal_bias="0.076"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
-        app:layout_constraintVertical_bias="0.529" />
-
-    <!-- Кнопка "Следующее слово" -->
+        app:layout_constraintVertical_bias="0.543" />
 
     <ImageButton
         android:id="@+id/ib_back"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginStart="18dp"
         android:layout_marginTop="7dp"
-        android:layout_marginEnd="331dp"
-        android:layout_marginBottom="641dp"
+
         android:background="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.045"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
 
-        app:layout_constraintVertical_bias="0.869"
+        app:layout_constraintVertical_bias="0.03"
         app:srcCompat="@drawable/arrow_left" />
 
     <Button
