@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
@@ -52,18 +54,19 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
         int cntDays = user_activity.getInt("cnt_days", 0);
-        // Обнуляем, чтобы не было переполнения памяти и сбросить счетчки с новой недели
-        if(cntDays > 100000 || Objects.equals(getCurrentDayOfWeek(), "Monday")){
+        String lastDate = user_activity.getString("last_activity_date", "");
+        String currentDate = getCurrentDate();
+        if(cntDays > 0){
+            this.tv_win_streak.setText("Вы изучали слова " + cntDays + " дней подряд! Так держать! ;)");
+        } else{
+            this.tv_win_streak.setText("У вас пока что нет серии дней подряд когда вы успешно повторили слова :(");
+        }
+        // Обнуляем, чтобы сбросить отображение с новой недели
+        if(lastDate.isEmpty() || !isSameWeek(lastDate, currentDate)){
             SharedPreferences.Editor editor = user_activity.edit();
             editor.remove("weekly_activity");
             editor.apply();
         }
-
-        this.win_streak = user_activity.getInt("win_streak", 0);
-        if(win_streak == 0)
-            tv_win_streak.setText("У вас пока что нет серии побед :(");
-        else
-            tv_win_streak.setText("Ваша серия побед составила" + (this.win_streak) + " дней! Так держать!");
 
         LinearLayout row1 = findViewById(R.id.row1);
         LinearLayout row2 = findViewById(R.id.row2);
@@ -120,20 +123,17 @@ public class MainActivity extends AppCompatActivity {
         return set.toArray(new String[0]);
     }
     private boolean hasDoneLearningToday() {
-        // Проверяем, запоминал ли пользователь слова сегодня
         String lastActivityDate = this.user_activity.getString("last_activity_date", "");
         String todayDate = getCurrentDate();
 
         return todayDate.equals(lastActivityDate);
     }
     private String getCurrentDate() {
-        // Текущая дата
         Calendar calendar = Calendar.getInstance();
 
         return DateFormat.format("yyyy-MM-dd", calendar).toString();
     }
     public String getCurrentDayOfWeek(){
-        // Текущий день недели
         Calendar calendar = Calendar.getInstance();
         int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 
@@ -164,12 +164,29 @@ public class MainActivity extends AppCompatActivity {
         return dayName;
     }
     public boolean isDayActive(String day) {
-        //activeDays = getWeeklyActivity(); // Для дебага закоментить
+        activeDays = getWeeklyActivity(); // Для дебага закоментить
         for (String activeDay : activeDays) {
             if (activeDay.equals(day)) {
                 return true;
             }
         }
         return false;
+    }
+    private boolean isSameWeek(String date1, String date2) {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+
+        // Преобразуем строки в даты
+        try {
+            cal1.setTime(Objects.requireNonNull(new SimpleDateFormat("yyyy-MM-dd").parse(date1)));
+            cal2.setTime(Objects.requireNonNull(new SimpleDateFormat("yyyy-MM-dd").parse(date2)));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // Сравниваем номера недель и годы
+        return cal1.get(Calendar.WEEK_OF_YEAR) == cal2.get(Calendar.WEEK_OF_YEAR) &&
+                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
     }
 }

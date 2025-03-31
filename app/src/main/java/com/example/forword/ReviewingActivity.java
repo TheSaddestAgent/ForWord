@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,9 +20,15 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class ReviewingActivity extends AppCompatActivity {
     EditText et_word;
@@ -109,6 +116,32 @@ public class ReviewingActivity extends AppCompatActivity {
             nextWord();
         });
     }
+    public boolean isYesterday(String date1) {
+        // Получаем текущую дату
+        Calendar calendar = Calendar.getInstance();
+
+        // Устанавливаем время на начало дня (00:00:00)
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // Получаем вчерашнюю дату
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        Date yesterday = calendar.getTime();
+
+        // Преобразуем строку date1 в объект Date
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date dateToCheck;
+        try {
+            dateToCheck = sdf.parse(date1);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false; // Если не удалось распарсить дату
+        }
+
+        return dateToCheck.equals(yesterday);
+    }
     private void nextWord(){
         if(this.cur == null || this.cur.isEmpty()){
             Toast.makeText(this, "ERROR: this.cur пустой", Toast.LENGTH_SHORT).show();
@@ -116,6 +149,40 @@ public class ReviewingActivity extends AppCompatActivity {
         }
 
         updateLearningMap();
+
+        SharedPreferences.Editor editor = user_activity.edit();
+        int cntDays = user_activity.getInt("cnt_days", 0);
+        String lastDate = user_activity.getString("last_activity_date", "");
+        String todayDate = getCurrentDate();
+
+        if(isYesterday(lastDate)){
+            cntDays++;
+        } else{
+            if(!lastDate.equals(todayDate)){
+                cntDays = 0;
+            }
+        }
+        editor.putInt("cnt_days", cntDays);
+        editor.putString("last_activity_date", todayDate);
+        editor.apply();
+
+        Set<String> weeklyActivity = user_activity.getStringSet("weekly_activity", new HashSet<String>());
+        String[] arr_weeklyActivity = weeklyActivity.toArray(new String[0]);
+        boolean isTodayActive = false;
+        for(String day : arr_weeklyActivity){
+            if(Objects.equals(day, getCurrentDayOfWeek())){
+                isTodayActive = true;
+                break;
+            }
+        }
+        if(!isTodayActive){
+            Set<String> updatedActivity = new HashSet<>(weeklyActivity);
+
+            updatedActivity.add(getCurrentDayOfWeek());
+
+            editor.putStringSet("weekly_activity", updatedActivity);
+            editor.apply();
+        }
 
         if(learningMap.isEmpty()){
             this.tv_translation.setText("Вы повторили все слова! Начните изучать новые!");
@@ -136,5 +203,41 @@ public class ReviewingActivity extends AppCompatActivity {
         editor.putString("learningMap", json);
         editor.apply();
     }
+    public String getCurrentDayOfWeek(){
+        // Текущий день недели
+        Calendar calendar = Calendar.getInstance();
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 
+        String dayName = "";
+        switch (dayOfWeek) {
+            case Calendar.SUNDAY:
+                dayName = "Sunday";
+                break;
+            case Calendar.MONDAY:
+                dayName = "Monday";
+                break;
+            case Calendar.TUESDAY:
+                dayName = "Tuesday";
+                break;
+            case Calendar.WEDNESDAY:
+                dayName = "Wednesday";
+                break;
+            case Calendar.THURSDAY:
+                dayName = "Thursday";
+                break;
+            case Calendar.FRIDAY:
+                dayName = "Friday";
+                break;
+            case Calendar.SATURDAY:
+                dayName = "Saturday";
+                break;
+        }
+        return dayName;
+    }
+    private String getCurrentDate() {
+        // Текущая дата
+        Calendar calendar = Calendar.getInstance();
+
+        return DateFormat.format("yyyy-MM-dd", calendar).toString();
+    }
 }
