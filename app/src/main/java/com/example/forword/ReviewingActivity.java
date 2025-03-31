@@ -53,6 +53,7 @@ public class ReviewingActivity extends AppCompatActivity {
         if(!user_activity.contains("learningMap") || (user_activity.getString("learningMap", null) == null)
                 || (Objects.equals(user_activity.getString("learningMap", null), "{}"))){
             Toast.makeText(this, "В данный момент у вас нет текущих слов", Toast.LENGTH_SHORT).show();
+            this.tv_translation.setText("Вы повторили все слова! Начните изучать новые!");
         }
         else {
 
