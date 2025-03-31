@@ -37,7 +37,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.user_activity = getSharedPreferences("user_activity", Context.MODE_PRIVATE);
-
+        /*
+        // проверка что работает отображение для > 0
+        SharedPreferences.Editor editor = user_activity.edit();
+        editor.putInt("cnt_days", 0);
+        editor.apply();
+        */
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tv_win_streak = findViewById(R.id.tv_win_streak);
