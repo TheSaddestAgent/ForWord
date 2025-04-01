@@ -30,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
     Button btn_startLearning, btn_startReviewing, btn_exit;
     SharedPreferences user_activity;
     TextView tv_win_streak;
-    int win_streak;
-    GridLayout gridLayout; // Контейнер для кружочков для дней недели
     String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     String[] activeDays = {"Monday", "Friday"}; // Массив активных дней как в shared preference (для дебага)
     @Override

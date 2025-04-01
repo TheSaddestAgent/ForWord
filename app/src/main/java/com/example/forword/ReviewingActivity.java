@@ -95,12 +95,15 @@ public class ReviewingActivity extends AppCompatActivity {
         });
         btn_check.setOnClickListener(view ->{
             String userGuess = et_word.getText().toString();
-            if(learningMap == null || learningMap.isEmpty() || !((tv_translation.getText().toString()).equals(learningMap.get(userGuess)))){
-                Toast.makeText(this,"Неправильно, попробуйте еще", Toast.LENGTH_SHORT).show();
+            if(learningMap != null && !learningMap.isEmpty() ){
+                if(!((tv_translation.getText().toString()).equals(learningMap.get(userGuess)))){
+                    Toast.makeText(this,"Неправильно, попробуйте еще", Toast.LENGTH_SHORT).show();
+                } else{
+                    Toast.makeText(this,"Правильно!", Toast.LENGTH_SHORT).show();
+                }
             } else{
                 this.tv_translation.setText("Вы повторили все слова! Начните изучать новые!");
                 nextWord();
-
             }
         });
         ib_eye.setOnClickListener(view -> {

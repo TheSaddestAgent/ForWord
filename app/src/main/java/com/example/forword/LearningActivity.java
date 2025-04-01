@@ -39,7 +39,7 @@ public class LearningActivity extends AppCompatActivity {
     private GestureDetector gestureDetector;
     private CardView cardView;
     private TextView wordText, translationText;
-    private Button knowButton, nextWordButton;
+    private Button knowButton, addButton;
 
     // Список слов и переводов
     private ArrayList<String[]> wordsList;
@@ -64,7 +64,7 @@ public class LearningActivity extends AppCompatActivity {
         wordText = findViewById(R.id.wordText);
         translationText = findViewById(R.id.translationText);
         knowButton = findViewById(R.id.knowButton);
-        nextWordButton = findViewById(R.id.nextWordButton);
+        addButton = findViewById(R.id.addButton);
 
         wordsList = new ArrayList<>();
 
@@ -196,7 +196,8 @@ public class LearningActivity extends AppCompatActivity {
             nextWord();
         });
 
-        nextWordButton.setOnClickListener(v -> {
+        addButton.setOnClickListener(v -> {
+            addToReview();
             nextWord();
         });
         ib_back.setOnClickListener(view -> {
@@ -273,51 +274,6 @@ public class LearningActivity extends AppCompatActivity {
         }
     }
 
-    private void flipCardWithNoTiming() {
-
-        if (translationText.getVisibility() == View.GONE) {
-            translationText.setVisibility(View.VISIBLE);
-            wordText.setVisibility(View.GONE);
-        } else {
-            translationText.setVisibility(View.GONE);
-            wordText.setVisibility(View.VISIBLE);
-        }
-
-        int timing = 0;
-
-        // Анимация переворота карточки
-        ObjectAnimator flipAnimator = ObjectAnimator.ofFloat(cardView, "rotationY", 0f, 180f);
-        flipAnimator.setDuration(timing);
-
-        ObjectAnimator textAnimator;
-        if (isFrontSide) {
-            // Анимация отзеркаливания текста (переворот к переводу)
-            textAnimator = ObjectAnimator.ofFloat(translationText, "scaleX", 1f, -1f);
-            textAnimator.setDuration(timing);
-            isFrontSide = false;
-        } else {
-            // Анимация отзеркаливания текста (переворот к слову)
-            textAnimator = ObjectAnimator.ofFloat(wordText, "scaleX", 1f, -1f);
-            textAnimator.setDuration(timing);
-            isFrontSide = true;
-        }
-
-        // Добавляем сброс трансформаций после завершения анимации
-        flipAnimator.addListener(new android.animation.AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(android.animation.Animator animation) {
-                // Сброс поворотов и смещений
-                cardView.setRotationY(0);    // Сбрасываем вращение Y
-                cardView.setTranslationX(0); // Сбрасываем смещение по X
-                cardView.setRotation(0);     // Сбрасываем общий поворот
-            }
-        });
-
-        // Запуск анимаций
-        //textAnimator.start();
-        flipAnimator.start();
-    }
-
     private void flipCard() {
         if (translationText.getVisibility() == View.GONE) {
             translationText.setVisibility(View.VISIBLE);
@@ -358,7 +314,6 @@ public class LearningActivity extends AppCompatActivity {
         });
 
         // Запуск анимаций
-        //textAnimator.start();
         flipAnimator.start();
     }
 
@@ -370,39 +325,41 @@ public class LearningActivity extends AppCompatActivity {
             wordsMap.remove(wordText.getText().toString());
             Gson gson = new Gson();
             String json = gson.toJson(wordsMap);
-
             SharedPreferences.Editor editor = user_activity.edit();
             editor.putString("wordsMap", json);
             editor.apply();
 
-            json = user_activity.getString("learningMap", null);
-            gson = new Gson();
-            if(json == null || json.isEmpty()){
-                HashMap<String, String> tmp = new HashMap<>();
-                tmp.put(wordText.getText().toString(), translationText.getText().toString());
-                json = gson.toJson(tmp);
-                editor.putString("learningMap", json);
-                editor.apply();
-                return;
-            }
-            Type learningMapType = new TypeToken<HashMap<String, String>>() {
-            }.getType();
-            learningMap = gson.fromJson(json, learningMapType);
-
-            if (learningMap == null) {
-                HashMap<String, String> tmp = new HashMap<>();
-                tmp.put(wordText.getText().toString(), translationText.getText().toString());
-                json = gson.toJson(tmp);
-            } else {
-                learningMap.put(wordText.getText().toString(), translationText.getText().toString());
-
-                json = gson.toJson(learningMap);
-            }
-            editor.putString("learningMap", json);
-            editor.apply();
+            addToReview();
         }
     }
+    private void addToReview(){
+        SharedPreferences.Editor editor = user_activity.edit();
+        String json = user_activity.getString("learningMap", null);
+        Gson gson = new Gson();
+        if(json == null || json.isEmpty()){
+            HashMap<String, String> tmp = new HashMap<>();
+            tmp.put(wordText.getText().toString(), translationText.getText().toString());
+            json = gson.toJson(tmp);
+            editor.putString("learningMap", json);
+            editor.apply();
+            return;
+        }
+        Type learningMapType = new TypeToken<HashMap<String, String>>() {
+        }.getType();
+        learningMap = gson.fromJson(json, learningMapType);
 
+        if (learningMap == null) {
+            HashMap<String, String> tmp = new HashMap<>();
+            tmp.put(wordText.getText().toString(), translationText.getText().toString());
+            json = gson.toJson(tmp);
+        } else {
+            learningMap.put(wordText.getText().toString(), translationText.getText().toString());
+
+            json = gson.toJson(learningMap);
+        }
+        editor.putString("learningMap", json);
+        editor.apply();
+    }
     private void swipeCardRight() {
         Toast.makeText(LearningActivity.this, "Свайп вправо", Toast.LENGTH_SHORT).show();
         swipeCardOffScreen();
@@ -424,7 +381,7 @@ public class LearningActivity extends AppCompatActivity {
             Toast.makeText(this, "Вы исследовали весь список слов!", Toast.LENGTH_SHORT).show();
         }
         if (!isFrontSide) {
-            flipCardWithNoTiming();
+            flipCard();
         }
         setWord(); // Обновляем отображаемое слово
     }
