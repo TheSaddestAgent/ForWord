@@ -13,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,10 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class LearningActivity extends AppCompatActivity {
-    private GestureDetector gestureDetector;
     private CardView cardView;
     private TextView wordText, translationText;
     private Button knowButton, addButton;
@@ -107,35 +104,6 @@ public class LearningActivity extends AppCompatActivity {
             }
         }
         setWord();
-
-        gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onSingleTapUp(@NonNull MotionEvent e) {
-                // Переворачиваем карточку по клику
-                if (!isSwiping)
-                    flipCard();
-                return super.onSingleTapUp(e);
-            }
-
-            @Override
-            public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
-                isSwiping = true;
-                if (velocityX > 0) {
-                    swipeCardRight();
-                } else {
-                    swipeCardLeft();
-                }
-                return super.onFling(e1, e2, velocityX, velocityY);
-            }
-
-            @Override
-            public void onLongPress(@NonNull MotionEvent e) {
-                super.onLongPress(e);
-                flipCard();
-
-                isSwiping = true; // Свайп также должен срабатывать на долгий пресс
-            }
-        });
 
         cardView.setOnTouchListener(new View.OnTouchListener() {
             private float downX;  // Начальная позиция по X
@@ -275,32 +243,14 @@ public class LearningActivity extends AppCompatActivity {
     }
 
     private void flipCard() {
-        if (translationText.getVisibility() == View.GONE) {
-            translationText.setVisibility(View.VISIBLE);
-            wordText.setVisibility(View.GONE);
-        } else {
-            translationText.setVisibility(View.GONE);
-            wordText.setVisibility(View.VISIBLE);
-        }
 
-        int timing = 100;
+
+        int timing = 300;
 
         // Анимация переворота карточки
         ObjectAnimator flipAnimator = ObjectAnimator.ofFloat(cardView, "rotationY", 0f, 180f);
         flipAnimator.setDuration(timing);
 
-        ObjectAnimator textAnimator;
-        if (isFrontSide) {
-            // Анимация отзеркаливания текста (переворот к переводу)
-            textAnimator = ObjectAnimator.ofFloat(translationText, "scaleX", 1f, -1f);
-            textAnimator.setDuration(timing);
-            isFrontSide = false;
-        } else {
-            // Анимация отзеркаливания текста (переворот к слову)
-            textAnimator = ObjectAnimator.ofFloat(wordText, "scaleX", 1f, -1f);
-            textAnimator.setDuration(timing);
-            isFrontSide = true;
-        }
 
         // Добавляем сброс трансформаций после завершения анимации
         flipAnimator.addListener(new android.animation.AnimatorListenerAdapter() {
@@ -310,16 +260,24 @@ public class LearningActivity extends AppCompatActivity {
                 cardView.setRotationY(0);    // Сбрасываем вращение Y
                 cardView.setTranslationX(0); // Сбрасываем смещение по X
                 cardView.setRotation(0);     // Сбрасываем общий поворот
+                if (translationText.getVisibility() == View.GONE) {
+                    translationText.setVisibility(View.VISIBLE);
+                    wordText.setVisibility(View.GONE);
+                } else {
+                    translationText.setVisibility(View.GONE);
+                    wordText.setVisibility(View.VISIBLE);
+                }
             }
         });
 
         // Запуск анимаций
         flipAnimator.start();
+
     }
 
     private void swipeCardLeft() {
         Toast.makeText(LearningActivity.this, "Свайп влево", Toast.LENGTH_SHORT).show();
-        swipeCardOffScreen();
+        swipeCardOffScreenLeft();
         isSwiping = false;
         if (this.wordsMap != null && !wordsMap.isEmpty()) {
             wordsMap.remove(wordText.getText().toString());
@@ -362,7 +320,7 @@ public class LearningActivity extends AppCompatActivity {
     }
     private void swipeCardRight() {
         Toast.makeText(LearningActivity.this, "Свайп вправо", Toast.LENGTH_SHORT).show();
-        swipeCardOffScreen();
+        swipeCardOffScreenRight();
         isSwiping = false;
 
         if (wordsMap != null && !wordsMap.isEmpty()) {
@@ -385,9 +343,15 @@ public class LearningActivity extends AppCompatActivity {
         }
         setWord(); // Обновляем отображаемое слово
     }
-
-    private void swipeCardOffScreen() {
-        ObjectAnimator moveOffScreen = ObjectAnimator.ofFloat(cardView, "translationX", cardView.getWidth());
+    private void swipeCardOffScreenLeft(){
+        ObjectAnimator moveOffScreen = ObjectAnimator.ofFloat(cardView, "translationX", -2 * cardView.getWidth());
+        swipeCardOffScreenGeneral(moveOffScreen);
+    }
+    private void swipeCardOffScreenRight(){
+        ObjectAnimator moveOffScreen = ObjectAnimator.ofFloat(cardView, "translationX", 2 * cardView.getWidth());
+        swipeCardOffScreenGeneral(moveOffScreen);
+    }
+    private void swipeCardOffScreenGeneral(ObjectAnimator moveOffScreen) {
         moveOffScreen.setDuration(500); // Длительность анимации
 
         // Когда анимация завершена, обновляем содержимое и возвращаем карточку в центр

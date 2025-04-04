@@ -7,11 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -19,7 +16,6 @@ import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 import java.util.Set;
@@ -31,16 +27,11 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences user_activity;
     TextView tv_win_streak;
     String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    String[] activeDays = {"Monday", "Friday"}; // Массив активных дней как в shared preference (для дебага)
+    String[] activeDays;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.user_activity = getSharedPreferences("user_activity", Context.MODE_PRIVATE);
-        /*
-        // проверка что работает отображение для > 0
-        SharedPreferences.Editor editor = user_activity.edit();
-        editor.putInt("cnt_days", 0);
-        editor.apply();
-        */
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         tv_win_streak = findViewById(R.id.tv_win_streak);
@@ -125,12 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
         return set.toArray(new String[0]);
     }
-    private boolean hasDoneLearningToday() {
-        String lastActivityDate = this.user_activity.getString("last_activity_date", "");
-        String todayDate = getCurrentDate();
-
-        return todayDate.equals(lastActivityDate);
-    }
     private String getCurrentDate() {
         Calendar calendar = Calendar.getInstance();
 
@@ -149,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         Calendar cal1 = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
 
-        // Преобразуем строки в даты
+        // строки в даты
         try {
             cal1.setTime(Objects.requireNonNull(new SimpleDateFormat("yyyy-MM-dd").parse(date1)));
             cal2.setTime(Objects.requireNonNull(new SimpleDateFormat("yyyy-MM-dd").parse(date2)));

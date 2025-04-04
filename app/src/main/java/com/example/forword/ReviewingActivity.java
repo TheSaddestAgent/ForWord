@@ -7,15 +7,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -110,12 +107,16 @@ public class ReviewingActivity extends AppCompatActivity {
             this.et_word.setText(this.cur);
         });
         btn_removeWord.setOnClickListener(view -> {
+            String transl = this.tv_translation.getText().toString();
+            if(this.cur == null || transl.isEmpty()) return;
             learningMap.remove(this.cur);
             nextWord();
         });
         btn_saveWord.setOnClickListener(view -> {
+            String transl = this.tv_translation.getText().toString();
+            if(this.cur == null || transl.isEmpty()) return;
             learningMap.remove(this.cur);
-            learningMap.put(this.cur, this.tv_translation.getText().toString());
+            learningMap.put(this.cur, transl);
             nextWord();
         });
     }
@@ -147,7 +148,7 @@ public class ReviewingActivity extends AppCompatActivity {
     }
     private void nextWord(){
         if(this.cur == null || this.cur.isEmpty()){
-            Toast.makeText(this, "ERROR: this.cur пустой", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "ERROR: this.cur пустой", Toast.LENGTH_SHORT).show();
             return;
         }
 
